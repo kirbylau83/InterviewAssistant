@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interview Dashboard</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="dashboard">
+      <header class="dashboard-header">
+        <div>
+          <h1>Interview Command Center</h1>
+          <p>Mid-Market & Enterprise AE Roles (Tech)</p>
+        </div>
+        <section class="timer-panel" aria-label="Interview timer">
+          <div class="timer-display" id="timerDisplay">30:00</div>
+          <div class="timer-controls">
+            <button type="button" id="startPauseButton">Start</button>
+            <button type="button" id="resetButton" class="secondary">Reset</button>
+          </div>
+          <div class="timer-presets" role="group" aria-label="Timer presets">
+            <button type="button" class="preset secondary" data-minutes="30">30m</button>
+            <button type="button" class="preset secondary" data-minutes="45">45m</button>
+            <button type="button" class="preset secondary" data-minutes="60">60m</button>
+          </div>
+        </section>
+      </header>
+
+      <section class="main-grid">
+        <article class="panel talking-points">
+          <h2>Main Talking Points</h2>
+          <textarea spellcheck="false">
+1) Snapshot intro (30 sec)
+- 8+ years in B2B SaaS, consultative and MEDDICC-led
+- Consistent attainment and expansion in complex accounts
+
+2) Mid-market motion
+- Land quickly, prove value in 90 days, expand with champions
+
+3) Enterprise motion
+- Multi-threaded engagement, executive alignment, mutual action plans
+
+4) Core strengths
+- Discovery depth, business case building, negotiation discipline
+
+5) Close
+- Why this company, why now, and what impact in first two quarters
+          </textarea>
+        </article>
+
+        <aside class="panel camera-panel">
+          <h2>Camera</h2>
+          <video id="cameraFeed" playsinline muted></video>
+          <div class="camera-fallback" id="cameraFallback">
+            Camera preview unavailable. Keep this area as posture/eye-contact reminder.
+          </div>
+        </aside>
+
+        <article class="panel qa-panel">
+          <h2>Q/A (From Interviewer)</h2>
+          <textarea spellcheck="false">
+Capture interviewer questions, then answer in concise framework:
+
+- Clarify intent
+- Answer with evidence (metric, example, outcome)
+- Tie back to role priorities
+          </textarea>
+        </article>
+
+        <article class="panel questions-panel">
+          <h2>Questions (For Interviewer)</h2>
+          <textarea spellcheck="false">
+1) What does top performance look like in this territory over 12 months?
+2) Where do deals most commonly stall in enterprise cycles?
+3) How do sales, product, and CS partner on strategic accounts?
+4) What are the biggest GTM priorities for the next two quarters?
+          </textarea>
+        </article>
+      </section>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>
