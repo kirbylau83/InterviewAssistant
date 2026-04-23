@@ -59,13 +59,25 @@
 
         <article class="panel qa-panel">
           <h2>Q/A (From Interviewer)</h2>
-          <textarea spellcheck="false">
-Capture interviewer questions, then answer in concise framework:
-
-- Clarify intent
-- Answer with evidence (metric, example, outcome)
-- Tie back to role priorities
-          </textarea>
+          <div class="qa-assistant-controls">
+            <button type="button" id="recordQuestionButton">Start Recording</button>
+            <button type="button" id="askAiButton" class="secondary">Ask Gemini</button>
+          </div>
+          <p class="qa-status" id="qaStatus">
+            Record the interviewer question, then ask Gemini for a concise answer.
+          </p>
+          <label class="qa-label" for="interviewerQuestion">Live question transcript</label>
+          <textarea id="interviewerQuestion" spellcheck="false" placeholder="Live transcript appears here..."></textarea>
+          <label class="qa-label" for="geminiAnswer">Gemini answer</label>
+          <textarea id="geminiAnswer" spellcheck="false" readonly placeholder="AI answer appears here..."></textarea>
+          <label class="qa-label" for="geminiApiKey">Gemini API key</label>
+          <input
+            id="geminiApiKey"
+            class="qa-input"
+            type="password"
+            placeholder="Paste Gemini API key (stored locally in this browser)"
+            autocomplete="off"
+          />
         </article>
 
         <article class="panel questions-panel">

@@ -122,6 +122,36 @@ button.secondary:hover {
   color: #bfdbfe;
 }
 
+.qa-assistant-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin-bottom: 0.5rem;
+}
+
+.qa-status {
+  margin: 0 0 0.5rem;
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+
+.qa-label {
+  margin-bottom: 0.3rem;
+  font-size: 0.8rem;
+  color: #bfdbfe;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.qa-input {
+  border-radius: 10px;
+  border: 1px solid #374151;
+  padding: 0.65rem;
+  font-size: 0.9rem;
+  background: var(--panel-alt);
+  color: var(--text);
+}
+
 .talking-points {
   grid-column: 1 / 2;
   grid-row: 1 / 2;
@@ -145,7 +175,7 @@ button.secondary:hover {
 textarea {
   width: 100%;
   flex: 1;
-  min-height: 0;
+  min-height: 110px;
   resize: none;
   border-radius: 10px;
   border: 1px solid #374151;
@@ -154,6 +184,16 @@ textarea {
   line-height: 1.45;
   background: var(--panel-alt);
   color: var(--text);
+}
+
+#interviewerQuestion {
+  min-height: 120px;
+  margin-bottom: 0.5rem;
+}
+
+#geminiAnswer {
+  min-height: 100px;
+  margin-bottom: 0.5rem;
 }
 
 video,
