@@ -9,20 +9,14 @@
   <body>
     <main class="dashboard">
       <header class="dashboard-header">
-        <div>
-          <h1>Interview Command Center</h1>
-          <p>Mid-Market & Enterprise AE Roles (Tech)</p>
-        </div>
+        <h1>Interview Dashboard</h1>
         <section class="timer-panel" aria-label="Interview timer">
-          <div class="timer-display" id="timerDisplay">30:00</div>
-          <div class="timer-controls">
-            <button type="button" id="startPauseButton">Start</button>
+          <div class="timer-label">Stopwatch</div>
+          <div class="timer-display" id="timerDisplay">00:00</div>
+          <div class="timer-controls" role="group" aria-label="Stopwatch controls">
+            <button type="button" id="startButton">Start</button>
+            <button type="button" id="stopButton" class="secondary">Stop</button>
             <button type="button" id="resetButton" class="secondary">Reset</button>
-          </div>
-          <div class="timer-presets" role="group" aria-label="Timer presets">
-            <button type="button" class="preset secondary" data-minutes="30">30m</button>
-            <button type="button" class="preset secondary" data-minutes="45">45m</button>
-            <button type="button" class="preset secondary" data-minutes="60">60m</button>
           </div>
         </section>
       </header>
@@ -50,10 +44,9 @@
         </article>
 
         <aside class="panel camera-panel">
-          <h2>Camera</h2>
-          <video id="cameraFeed" playsinline muted></video>
-          <div class="camera-fallback" id="cameraFallback">
-            Camera preview unavailable. Keep this area as posture/eye-contact reminder.
+          <h2>Camera Space</h2>
+          <div class="camera-slot">
+            Keep this area open. Drag your interview app camera tile/window here.
           </div>
         </aside>
 

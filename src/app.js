@@ -1,9 +1,7 @@
 const timerDisplay = document.getElementById("timerDisplay");
-const startPauseButton = document.getElementById("startPauseButton");
+const startButton = document.getElementById("startButton");
+const stopButton = document.getElementById("stopButton");
 const resetButton = document.getElementById("resetButton");
-const presetButtons = document.querySelectorAll(".preset");
-const cameraFeed = document.getElementById("cameraFeed");
-const cameraFallback = document.getElementById("cameraFallback");
 const recordQuestionButton = document.getElementById("recordQuestionButton");
 const askAiButton = document.getElementById("askAiButton");
 const qaStatus = document.getElementById("qaStatus");
@@ -11,8 +9,7 @@ const interviewerQuestion = document.getElementById("interviewerQuestion");
 const aiAnswer = document.getElementById("aiAnswer");
 const aiApiKeyInput = document.getElementById("aiApiKey");
 
-let totalSeconds = 30 * 60;
-let remainingSeconds = totalSeconds;
+let elapsedSeconds = 0;
 let timerId = null;
 let recognition = null;
 let isRecording = false;
@@ -21,15 +18,18 @@ const OPENROUTER_MODEL = "openrouter/free";
 const API_KEY_STORAGE = "openrouter_api_key";
 
 function formatTime(seconds) {
-  const mins = Math.floor(seconds / 60)
+  const hours = Math.floor(seconds / 3600)
+    .toString()
+    .padStart(2, "0");
+  const mins = Math.floor((seconds % 3600) / 60)
     .toString()
     .padStart(2, "0");
   const secs = (seconds % 60).toString().padStart(2, "0");
-  return `${mins}:${secs}`;
+  return `${hours}:${mins}:${secs}`;
 }
 
 function renderTimer() {
-  timerDisplay.textContent = formatTime(remainingSeconds);
+  timerDisplay.textContent = formatTime(elapsedSeconds);
 }
 
 function stopTimer() {
@@ -37,31 +37,27 @@ function stopTimer() {
     clearInterval(timerId);
     timerId = null;
   }
-  startPauseButton.textContent = "Start";
+  startButton.disabled = false;
+  stopButton.disabled = true;
 }
 
 function tick() {
-  if (remainingSeconds > 0) {
-    remainingSeconds -= 1;
-    renderTimer();
-    return;
-  }
-  stopTimer();
+  elapsedSeconds += 1;
+  renderTimer();
 }
 
 function startTimer() {
   if (timerId) {
-    stopTimer();
     return;
   }
-
-  startPauseButton.textContent = "Pause";
   timerId = setInterval(tick, 1000);
+  startButton.disabled = true;
+  stopButton.disabled = false;
 }
 
 function resetTimer() {
   stopTimer();
-  remainingSeconds = totalSeconds;
+  elapsedSeconds = 0;
   renderTimer();
 }
 
@@ -247,21 +243,9 @@ async function askAi() {
   }
 }
 
-startPauseButton.addEventListener("click", startTimer);
+startButton.addEventListener("click", startTimer);
+stopButton.addEventListener("click", stopTimer);
 resetButton.addEventListener("click", resetTimer);
-
-presetButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    const minutes = Number(button.dataset.minutes);
-    if (!Number.isFinite(minutes) || minutes <= 0) {
-      return;
-    }
-    totalSeconds = minutes * 60;
-    remainingSeconds = totalSeconds;
-    stopTimer();
-    renderTimer();
-  });
-});
 
 recordQuestionButton.addEventListener("click", toggleRecording);
 askAiButton.addEventListener("click", askAi);
@@ -272,23 +256,7 @@ aiApiKeyInput.addEventListener("change", () => {
   }
 });
 
-async function setupCamera() {
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    cameraFallback.style.display = "block";
-    return;
-  }
-
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    cameraFeed.srcObject = stream;
-    await cameraFeed.play();
-  } catch (_error) {
-    cameraFeed.style.display = "none";
-    cameraFallback.style.display = "block";
-  }
-}
-
 renderTimer();
 loadStoredApiKey();
 setupSpeechRecognition();
-setupCamera();
+stopButton.disabled = true;
