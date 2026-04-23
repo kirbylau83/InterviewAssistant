@@ -8,8 +8,8 @@ const recordQuestionButton = document.getElementById("recordQuestionButton");
 const askAiButton = document.getElementById("askAiButton");
 const qaStatus = document.getElementById("qaStatus");
 const interviewerQuestion = document.getElementById("interviewerQuestion");
-const geminiAnswer = document.getElementById("geminiAnswer");
-const geminiApiKeyInput = document.getElementById("geminiApiKey");
+const aiAnswer = document.getElementById("aiAnswer");
+const aiApiKeyInput = document.getElementById("aiApiKey");
 
 let totalSeconds = 30 * 60;
 let remainingSeconds = totalSeconds;
@@ -17,8 +17,8 @@ let timerId = null;
 let recognition = null;
 let isRecording = false;
 
-const GEMINI_MODEL = "gemini-2.0-flash";
-const GEMINI_KEY_STORAGE = "gemini_api_key";
+const OPENROUTER_MODEL = "openrouter/free";
+const API_KEY_STORAGE = "openrouter_api_key";
 
 function formatTime(seconds) {
   const mins = Math.floor(seconds / 60)
@@ -136,7 +136,7 @@ function toggleRecording() {
   if (isRecording) {
     isRecording = false;
     recognition.stop();
-    setQaStatus("Recording stopped. You can now ask Gemini for an answer.");
+    setQaStatus("Recording stopped. You can now ask AI for an answer.");
     return;
   }
 
@@ -152,39 +152,39 @@ function toggleRecording() {
 }
 
 function loadStoredApiKey() {
-  const storedKey = window.localStorage.getItem(GEMINI_KEY_STORAGE);
+  const storedKey = window.localStorage.getItem(API_KEY_STORAGE);
   if (storedKey) {
-    geminiApiKeyInput.value = storedKey;
+    aiApiKeyInput.value = storedKey;
   }
 }
 
-function getGeminiApiKey() {
-  const key = geminiApiKeyInput.value.trim();
+function getApiKey() {
+  const key = aiApiKeyInput.value.trim();
   if (!key) {
     return "";
   }
-  window.localStorage.setItem(GEMINI_KEY_STORAGE, key);
+  window.localStorage.setItem(API_KEY_STORAGE, key);
   return key;
 }
 
-async function askGemini() {
+async function askAi() {
   const question = interviewerQuestion.value.trim();
   if (!question) {
-    setQaStatus("Please record or type a question before asking Gemini.");
+    setQaStatus("Please record or type a question before asking AI.");
     return;
   }
 
-  const apiKey = getGeminiApiKey();
+  const apiKey = getApiKey();
   if (!apiKey) {
-    setQaStatus("Please provide a Gemini API key.");
-    geminiApiKeyInput.focus();
+    setQaStatus("Please provide an OpenRouter API key.");
+    aiApiKeyInput.focus();
     return;
   }
 
   askAiButton.disabled = true;
   askAiButton.textContent = "Thinking...";
-  geminiAnswer.value = "";
-  setQaStatus("Generating concise answer with Gemini...");
+  aiAnswer.value = "";
+  setQaStatus("Generating concise answer with AI...");
 
   const prompt = [
     "You are an expert B2B SaaS account executive interview coach.",
@@ -199,47 +199,51 @@ async function askGemini() {
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(apiKey)}`,
+      "https://openrouter.ai/api/v1/chat/completions",
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          contents: [
+          model: OPENROUTER_MODEL,
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are an expert B2B SaaS account executive interview coach. Keep answers concise and practical."
+            },
             {
               role: "user",
-              parts: [{ text: prompt }]
+              content: prompt
             }
-          ]
+          ],
+          temperature: 0.3
         })
       }
     );
 
     const payload = await response.json();
     if (!response.ok) {
-      const message = payload?.error?.message || "Gemini request failed.";
+      const message = payload?.error?.message || "AI request failed.";
       throw new Error(message);
     }
 
-    const answer =
-      payload?.candidates?.[0]?.content?.parts
-        ?.map((part) => part.text || "")
-        .join("")
-        .trim() || "";
+    const answer = payload?.choices?.[0]?.message?.content?.trim() || "";
 
     if (!answer) {
-      throw new Error("Gemini returned an empty answer.");
+      throw new Error("The model returned an empty answer.");
     }
 
-    geminiAnswer.value = answer;
-    setQaStatus("Gemini answer ready. Edit or use as needed.");
+    aiAnswer.value = answer;
+    setQaStatus("AI answer ready. Edit or use as needed.");
   } catch (error) {
-    setQaStatus(`Gemini error: ${error.message}`);
-    geminiAnswer.value = "Unable to generate an answer. Check your API key and network, then try again.";
+    setQaStatus(`AI error: ${error.message}`);
+    aiAnswer.value = "Unable to generate an answer. Check your API key and network, then try again.";
   } finally {
     askAiButton.disabled = false;
-    askAiButton.textContent = "Ask Gemini";
+    askAiButton.textContent = "Ask AI";
   }
 }
 
@@ -260,11 +264,11 @@ presetButtons.forEach((button) => {
 });
 
 recordQuestionButton.addEventListener("click", toggleRecording);
-askAiButton.addEventListener("click", askGemini);
-geminiApiKeyInput.addEventListener("change", () => {
-  const key = geminiApiKeyInput.value.trim();
+askAiButton.addEventListener("click", askAi);
+aiApiKeyInput.addEventListener("change", () => {
+  const key = aiApiKeyInput.value.trim();
   if (key) {
-    window.localStorage.setItem(GEMINI_KEY_STORAGE, key);
+    window.localStorage.setItem(API_KEY_STORAGE, key);
   }
 });
 
